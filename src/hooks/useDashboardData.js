@@ -12,16 +12,16 @@ export const useDashboardData = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching data...');
+      console.log('📊 Fetching data...');
       const rawData = await fetchGoogleSheetData();
-      console.log('Raw data:', rawData);
+      console.log('✅ Raw data rows:', rawData?.length);
       const transformedData = transformDashboardData(rawData);
-      console.log('Transformed data:', transformedData);
+      console.log('✅ Transformed metrics:', transformedData.metrics);
       setData(transformedData);
       setLastUpdated(new Date());
       setError(null);
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
+      console.error('❌ Error:', err);
       setError(err.message || 'Failed to fetch data');
     } finally {
       setLoading(false);
@@ -33,10 +33,7 @@ export const useDashboardData = () => {
   }, [fetchData]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, UPDATE_INTERVAL);
-
+    const intervalId = setInterval(fetchData, UPDATE_INTERVAL);
     return () => clearInterval(intervalId);
   }, [fetchData]);
 
